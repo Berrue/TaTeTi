@@ -10,7 +10,7 @@ pantalla = pygame.display.set_mode((500, 400))
 blanco = (255, 255, 255)
 negro = (0,0,0)
 rojo = (255,0,0)
-pantalla.fill(rojo)
+pantalla.fill(negro)
 
 
 
@@ -20,9 +20,9 @@ def box(x, y):
     return box
 
 def tablero():
-    tablero = [(0,0,0), #0.0 0.1 0.2
-                (0,0,0), #1.0 1.1 1.2
-                (0,0,0)] #2.0 2.1 2.2
+    tablero = [[0,0,0], #0.0 0.1 0.2
+                [0,0,0], #1.0 1.1 1.2
+                [0,0,0]] #2.0 2.1 2.2
 
     lineas = [(160, 42, 10, 340),
                 (320, 42, 10, 340),
@@ -45,31 +45,50 @@ def tablero():
 
 
 
-def juego(img, cajas):
+def juego(img, cajas, tablero):
+    
+
+    print (tablero)
     corriendo = True
     while corriendo:
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()  # Asegura que el programa salga completamente
+            
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()  # Obtener la posición del mouse
+            
                 for i, caja in enumerate(cajas):
-                    if caja.collidepoint(pos):  # Verificar si se hizo clic en una caja
-                        # Dibujar la imagen en la caja correspondiente
-                        pantalla.blit(img, (caja.x + 5, caja.y + 5))
-                        return i  # Retorna el índice de la caja seleccionada
-
+                    if caja.collidepoint(pos):  # Verificar si se hizo clic en una caja# Dibujar la imagen en la caja correspondiente
+                        fila = i // 3  # División entera para obtener la fila (0, 1, 2)
+                        columna = i % 3  # Módulo para obtener la columna (0, 1, 2)
+                        if tablero[fila][columna] == 0:
+                            pantalla.blit(img, (caja.x + 5, caja.y + 5))
+                            corriendo = False
+                        else:
+                            print("clickea un valido boludo")
+                        
+                        
+                        
+                        
+    
+ 
         pygame.display.update()
+    return tablero, fila, columna
 
 
-def player1(cajas):
-    equis = pygame.image.load('cruz.png')   
-    juego(equis , cajas)
+def player1(cajas, tabla):
+    equis = pygame.transform.scale(pygame.image.load('cruz.png'),(80,80))   
+    tabla, fila, columna = juego(equis , cajas, tabla)
+    tabla[fila][columna] = 1
+    return tabla
+def player2(cajas, tabla):
+    circulo = pygame.transform.scale(pygame.image.load('circulo.png'),(80,80))
+    tabla, fila, columna = juego(circulo, cajas, tabla)
+    tabla[fila][columna] = 2
+    return tabla
 
-def player2(cajas):
-    circulo = pygame.image.load('circulo.png')
-    juego(circulo, cajas)
 
 def turno():
     tabla, cajas = tablero()
@@ -79,15 +98,15 @@ def turno():
             print("Empate")
             break
         elif turno % 2 == 0:
-            player1(cajas)
+            tabla = player1(cajas, tabla)
             if check_win(tabla,turno) == True:
-                break
+               break
             turno += 1
         elif turno % 2 == 1: 
-            player2(cajas)
+            tabla = player2(cajas, tabla)
             turno += 1
             if check_win(tabla,turno) == True:
-                break
+               break
         
     
     return True
@@ -95,23 +114,30 @@ def turno():
 
 def check_win(tablero,turno):
     victoria = False
-    if tablero[0][0] == tablero[0][1] == tablero[0][2] == 1:
+    if tablero[0][0] == tablero[0][1] == tablero[0][2] == 1 or tablero[0][0] == tablero[0][1] == tablero[0][2] == 2:
         victoria = True
-    elif tablero[1][0] == tablero[1][1] == tablero[1][2] == 1:
+        pygame.draw.rect(pantalla, blanco, (90, 30, 10, 350))
+    elif tablero[1][0] == tablero[1][1] == tablero[1][2] == 1 or tablero[1][0] == tablero[1][1] == tablero[1][2] == 2:
         victoria = True
-    elif tablero[2][0] == tablero[2][1] == tablero[2][2] == 1:
+        pygame.draw.rect(pantalla, blanco, (240, 30, 10, 350))
+    elif tablero[2][0] == tablero[2][1] == tablero[2][2] == 1 or tablero[2][0] == tablero[2][1] == tablero[2][2] == 2:
         victoria = True
-    elif tablero[0][0] == tablero[1][0] == tablero[2][0] == 1:
+        pygame.draw.rect(pantalla, blanco, (390, 30, 10, 350))
+    elif tablero[0][0] == tablero[1][0] == tablero[2][0] == 1 or tablero[0][0] == tablero[1][0] == tablero[2][0] == 2:
         victoria = True
-    elif tablero[0][1] == tablero[1][1] == tablero[2][1] == 1:
+        pygame.draw.rect(pantalla, blanco, (42, 90, 400, 10))
+    elif tablero[0][1] == tablero[1][1] == tablero[2][1] == 1 or tablero[0][1] == tablero[1][1] == tablero[2][1] == 2:
         victoria = True
-    elif tablero[0][2] == tablero[1][2] == tablero[2][2] == 1:
+        pygame.draw.rect(pantalla, blanco, (42, 230, 400, 10))
+    elif tablero[0][2] == tablero[1][2] == tablero[2][2] == 1 or tablero[0][2] == tablero[1][2] == tablero[2][2] == 2:
         victoria = True
-    elif tablero[0][0] == tablero[1][1] == tablero[2][2] == 1:
+        pygame.draw.rect(pantalla, blanco, (42, 370, 400, 10))
+    elif tablero[0][0] == tablero[1][1] == tablero[2][2] == 1 or tablero[0][0] == tablero[1][1] == tablero[2][2] == 2:
         victoria = True
-    elif tablero[0][2] == tablero[1][1] == tablero[2][0] == 1:
+        pygame.draw.rect(pantalla, blanco, (390, 30, 10, 350))
+    elif tablero[0][2] == tablero[1][1] == tablero[2][0] == 1 or tablero[0][2] == tablero[1][1] == tablero[2][0] == 2:
         victoria = True
-
+        pygame.draw.rect(pantalla, blanco, (90, 30, 10, 350))
     if victoria == True:
         if turno % 2 == 0:
             print('Gana el jugador 1')

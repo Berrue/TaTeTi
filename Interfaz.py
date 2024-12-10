@@ -154,7 +154,7 @@ def game():
         partida_terminada = False
 
         while not partida_terminada:
-            if turno_actual >= 9:  # Si se completan los turnos, hay empate
+            if turno_actual >= 9:
                 print("Empate")
                 partida_terminada = True
             elif turno_actual % 2 == 0:

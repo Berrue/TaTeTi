@@ -10,6 +10,7 @@ pantalla = pygame.display.set_mode((500, 400))
 blanco = (255, 255, 255)
 negro = (0,0,0)
 rojo = (255,0,0)
+violeta = (137,71,200)
 pantalla.fill(negro)
 
 
@@ -116,28 +117,28 @@ def check_win(tablero,turno):
     victoria = False
     if tablero[0][0] == tablero[0][1] == tablero[0][2] == 1 or tablero[0][0] == tablero[0][1] == tablero[0][2] == 2:
         victoria = True
-        pygame.draw.rect(pantalla, blanco, (90, 30, 10, 350))
+        pygame.draw.rect(pantalla, violeta, (90, 30, 10, 350))
     elif tablero[1][0] == tablero[1][1] == tablero[1][2] == 1 or tablero[1][0] == tablero[1][1] == tablero[1][2] == 2:
         victoria = True
-        pygame.draw.rect(pantalla, blanco, (240, 30, 10, 350))
+        pygame.draw.rect(pantalla, violeta, (240, 30, 10, 350))
     elif tablero[2][0] == tablero[2][1] == tablero[2][2] == 1 or tablero[2][0] == tablero[2][1] == tablero[2][2] == 2:
         victoria = True
-        pygame.draw.rect(pantalla, blanco, (390, 30, 10, 350))
+        pygame.draw.rect(pantalla, violeta, (370, 30, 10, 350))
     elif tablero[0][0] == tablero[1][0] == tablero[2][0] == 1 or tablero[0][0] == tablero[1][0] == tablero[2][0] == 2:
         victoria = True
-        pygame.draw.rect(pantalla, blanco, (42, 90, 400, 10))
+        pygame.draw.rect(pantalla, violeta, (42, 75, 400, 10))
     elif tablero[0][1] == tablero[1][1] == tablero[2][1] == 1 or tablero[0][1] == tablero[1][1] == tablero[2][1] == 2:
         victoria = True
-        pygame.draw.rect(pantalla, blanco, (42, 230, 400, 10))
+        pygame.draw.rect(pantalla, violeta, (42, 210, 400, 10))
     elif tablero[0][2] == tablero[1][2] == tablero[2][2] == 1 or tablero[0][2] == tablero[1][2] == tablero[2][2] == 2:
         victoria = True
-        pygame.draw.rect(pantalla, blanco, (42, 370, 400, 10))
+        pygame.draw.rect(pantalla, violeta, (42, 335, 400, 10))
     elif tablero[0][0] == tablero[1][1] == tablero[2][2] == 1 or tablero[0][0] == tablero[1][1] == tablero[2][2] == 2:
         victoria = True
-        pygame.draw.rect(pantalla, blanco, (390, 30, 10, 350))
+        pygame.draw.line(pantalla, violeta, (40, 25), (400, 380), 10)
     elif tablero[0][2] == tablero[1][1] == tablero[2][0] == 1 or tablero[0][2] == tablero[1][1] == tablero[2][0] == 2:
         victoria = True
-        pygame.draw.rect(pantalla, blanco, (90, 30, 10, 350))
+        pygame.draw.line(pantalla, violeta, (410,40),(60,360), 10)
     if victoria == True:
         if turno % 2 == 0:
             print('Gana el jugador 1')
@@ -145,20 +146,32 @@ def check_win(tablero,turno):
             print('Gana el jugador 2')
     return victoria
 
-
 def game():
-    
-    
-    turno() 
-    pygame.display.update()
-    
-    game_over = False
-    while not game_over:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                game_over = True
+    while True:  # Bucle para reiniciar el juego
+        pantalla.fill(negro)  # Limpia la pantalla
+        tabla, cajas = tablero()  # Reinicia el tablero
+        turno_actual = 0
+        partida_terminada = False
 
+        while not partida_terminada:
+            if turno_actual >= 9:  # Si se completan los turnos, hay empate
+                print("Empate")
+                partida_terminada = True
+            elif turno_actual % 2 == 0:
+                tabla = player1(cajas, tabla)
+                if check_win(tabla, turno_actual):
+                    partida_terminada = True
+                turno_actual += 1
+            elif turno_actual % 2 == 1:
+                tabla = player2(cajas, tabla)
+                if check_win(tabla, turno_actual):
+                    partida_terminada = True
+                turno_actual += 1
 
-    pygame.quit()
+            pygame.display.update()
+
+        pygame.time.wait(3000)
+
+        print("Reiniciando el juego...")
 
 game()
